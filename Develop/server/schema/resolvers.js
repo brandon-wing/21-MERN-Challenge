@@ -1,5 +1,0 @@
-getSingleUser
-createUser
-login
-saveBook
-deleteBook
