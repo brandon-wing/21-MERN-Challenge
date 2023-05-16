@@ -54,6 +54,9 @@ const resolvers = {
         );
         return user;
       }
+      else {
+        throw new AuthenticationError('You need to be logged in!')
+      }
     },
   },
 };
