@@ -6,7 +6,7 @@ const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
-        foundUser = await User.findOne({ _id: context.user._id });
+        const foundUser = await User.findOne({ _id: context.user._id });
         return foundUser;
       } else {
         throw new AuthenticationError('You should log in first!');
@@ -32,6 +32,28 @@ const resolvers = {
       const user = await User.create({ username, email, password });
       const token = signToken(user);
       return { token, user };
+    },
+    saveBook: async (parent, { bookData }, context) => {
+      if (context.user) {
+        const user = await User.findByIdAndUpdate(
+          { _id: context.user._id },
+          { $addToSet: { savedBooks: bookData } },
+          { runValidators: true, new: true }
+        );
+        return user;
+      } else {
+        throw new AuthenticationError('You need to be logged in!');
+      }
+    },
+    removeBook: async (parent, { bookId }, context) => {
+      if (context.user) {
+        const user = await User.findByIdAndUpdate(
+          { _id: context.user._id },
+          { $pull: { savedBooks: { bookId } } },
+          { new: true }
+        );
+        return user;
+      }
     },
   },
 };
